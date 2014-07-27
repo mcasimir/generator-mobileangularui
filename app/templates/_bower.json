@@ -1,0 +1,11 @@
+{
+  "name": "<%= appSlug %>",
+  "version": "0.0.0",
+  "private": true,
+  "dependencies": {
+    "angular": "1.x",
+    "angular-route": "1.x",
+    "angular-touch": "1.x",
+    "mobile-angular-ui": "*"
+  }
+}
