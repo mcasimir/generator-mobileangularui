@@ -130,7 +130,7 @@ gulp.task('html', function() {
 gulp.task('templates', function() {
   return gulp.src(['src/templates/**/*.html'])
   .pipe(templateCache({
-    module: '<%= appModule %>'
+    module: 'MyApp'
   }))
   .pipe(uglify())
   .pipe(gulp.dest('./public/assets/js'));
@@ -138,17 +138,25 @@ gulp.task('templates', function() {
 
 
 /*======================================================================
-=            Compile and minify less generating source maps            =
+=            Compile, minify, mobilize less                            =
 ======================================================================*/
 
 gulp.task('less', function () {
   gulp.src(['./src/less/app.less', './src/less/responsive.less'])
-    .pipe(sourcemaps.init())
     .pipe(less({
       paths: [ path.resolve(__dirname, 'src/less'), path.resolve(__dirname, 'bower_components') ]
     }))
+    .pipe(mobilizer('app.css', {
+      'app.css': {
+        hover: false,
+        screens: ['0px']      
+      },
+      'hover.css': {
+        rules: false,
+        screens: ['0px']
+      }
+    }))
     .pipe(cssmin())
-    .pipe(sourcemaps.write('.'))
     .pipe(gulp.dest('./public/assets/css'));
 });
 
@@ -198,3 +206,41 @@ gulp.task('build', function(done) {
 ====================================*/
 
 gulp.task('default', ['build', 'connect', 'watch']);
+
+
+/*=================================
+=            Mobilizer            =
+=================================*/
+
+function mobilizer(filename, targets) {
+  var through = require('through2'),
+      gutil = require('gulp-util'),
+      PluginError = gutil.PluginError,
+      File = gutil.File,
+      _mobilizer = require('mobilizer');
+  
+  return through.obj(function(file, enc, callback) {
+
+    if (filename == file.relative) {    
+      if (file.isNull()) return; // ignore
+      if (file.isStream()) return this.emit('error', new PluginError('gulp-concat',  'Streaming not supported'));
+      
+      var content = file.contents.toString();
+      var results = _mobilizer(content, {targets: targets});
+      var stream  = this;
+      Object.keys(results).forEach(function(k){
+        stream.push(new File({
+          cwd: file.cwd,
+          base: file.base,
+          path: path.join(file.base, k),
+          contents: new Buffer(results[k]),
+          stat: file.stat
+        }));
+      });
+    } else {
+      this.push(file);  
+    }
+
+    callback();
+  });
+}

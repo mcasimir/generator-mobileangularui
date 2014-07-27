@@ -15,6 +15,8 @@
     "gulp-cssmin": "^0.1.6",
     "gulp-imagemin": "^0.6.2",
     "imagemin-pngcrush": "^0.1.0",
-    "gulp-angular-templatecache": "^1.2.1"
+    "gulp-angular-templatecache": "^1.2.1",
+    "through2": "^0.5.1",
+    "gulp-util": "^3.0.0"
   }
 }

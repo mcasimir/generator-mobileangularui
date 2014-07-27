@@ -56,14 +56,13 @@ var MobileangularuiGenerator = yeoman.generators.Base.extend({
     this.mkdir('public');
 
     this.copy('_package.json', 'package.json');
-    this.copy('_settings.json', 'settings.json');
     this.copy('_bower.json', 'bower.json');
     this.copy('_index.html', 'src/html/index.html');
     this.copy('_sidebar.html', 'src/templates/sidebar.html');
     this.copy('_home.html', 'src/templates/home.html');
     this.copy('_gitignore', '.gitignore');
     this.copy('_gulpfile.js', 'gulpfile.js');
-    this.copy('_app.js', 'src/js/controllers/main_controller.js');
+    this.copy('_main_controller.js', 'src/js/controllers/main_controller.js');
     this.copy('_app.js', 'src/js/app.js');
     this.write('src/less/variables.less', '');
     this.write('src/less/mixins.less', '');
@@ -72,8 +71,6 @@ var MobileangularuiGenerator = yeoman.generators.Base.extend({
   },
 
   projectfiles: function () {
-    this.copy('editorconfig', '.editorconfig');
-    this.copy('jshintrc', '.jshintrc');
   }
 });
 
