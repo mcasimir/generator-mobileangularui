@@ -3,6 +3,9 @@
 =====================================*/
 
 var config = {
+  dest: 'www',
+  minify_images: true,
+  copy_config_xml: true,
   vendor: {
     js: [
       './bower_components/angular/angular.js',
@@ -59,7 +62,7 @@ gulp.on('err', function(e) {
 =========================================*/
 
 gulp.task('clean', function (cb) {
-  rimraf('./public', cb);
+  rimraf(config.dest, cb);
 });
 
 
@@ -69,7 +72,7 @@ gulp.task('clean', function (cb) {
 
 gulp.task('connect', function() {
   connect.server({
-    root: 'public',
+    root: config.dest,
     host: config.server.host,
     port: config.server.port,
     livereload: true
@@ -82,7 +85,7 @@ gulp.task('connect', function() {
 ==============================================================*/
 
 gulp.task('livereload', function () {
-  gulp.src('./public/*.html')
+  gulp.src(path.join(config.dest, '*.html'))
     .pipe(connect.reload());
 });
 
@@ -92,13 +95,17 @@ gulp.task('livereload', function () {
 =====================================*/
 
 gulp.task('images', function () {
-  return gulp.src('src/images/**/*')
-      .pipe(imagemin({
-          progressive: true,
-          svgoPlugins: [{removeViewBox: false}],
-          use: [pngcrush()]
-      }))
-      .pipe(gulp.dest('public/assets/images'));
+  var stream = gulp.src('src/images/**/*')
+  
+  if (config.minify_images) {
+    stream = stream.pipe(imagemin({
+        progressive: true,
+        svgoPlugins: [{removeViewBox: false}],
+        use: [pngcrush()]
+    }))
+  };
+  
+  return stream.pipe(gulp.dest(path.join(config.dest, 'images')));
 });
 
 
@@ -108,7 +115,7 @@ gulp.task('images', function () {
 
 gulp.task('fonts', function() {
   return gulp.src(config.vendor.fonts)
-  .pipe(gulp.dest('./public/assets/fonts/'));
+  .pipe(gulp.dest(path.join(config.dest, 'fonts')));
 });
 
 
@@ -119,9 +126,20 @@ gulp.task('fonts', function() {
 gulp.task('html', function() {
   return gulp.src([
   'src/html/**/*.html'])
-  .pipe(gulp.dest('./public/'));
+  .pipe(gulp.dest(config.dest));
 });
- 
+
+
+/*=================================================
+=             Copy xml files to dest              =
+=================================================*/
+
+gulp.task('config_xml', function() {
+  return gulp.src([
+  'src/config.xml'])
+  .pipe(gulp.dest(config.dest));
+});
+
 
 /*========================================================================
 =            Precompile angular templates to js and minify it            =
@@ -130,10 +148,10 @@ gulp.task('html', function() {
 gulp.task('templates', function() {
   return gulp.src(['src/templates/**/*.html'])
   .pipe(templateCache({
-    module: 'MyApp'
+    module: '<%= appModule %>'
   }))
   .pipe(uglify())
-  .pipe(gulp.dest('./public/assets/js'));
+  .pipe(gulp.dest(path.join(config.dest, 'js')));
 });
 
 
@@ -157,7 +175,7 @@ gulp.task('less', function () {
       }
     }))
     .pipe(cssmin())
-    .pipe(gulp.dest('./public/assets/css'));
+    .pipe(gulp.dest(path.join(config.dest, 'css')));
 });
 
 
@@ -174,7 +192,7 @@ gulp.task('js', function() {
     .pipe(concat('app.js'))
     .pipe(uglify())
     .pipe(sourcemaps.write('.'))
-    .pipe(gulp.dest('./public/assets/js'));
+    .pipe(gulp.dest(path.join(config.dest, 'js')));
 });
 
 
@@ -183,12 +201,15 @@ gulp.task('js', function() {
 ===================================================================*/
 
 gulp.task('watch', function () {
-  gulp.watch(['./public/**/*'], ['livereload']);
+  gulp.watch([config.dest + '/**/*'], ['livereload']);
   gulp.watch(['./src/templates/**/*'], ['templates']);
   gulp.watch(['./src/html/**/*'], ['html']);
   gulp.watch(['./src/less/**/*'], ['less']);
   gulp.watch(['./src/js/**/*'], ['js']);
   gulp.watch(['./src/images/**/*'], ['images']);
+  if (config.copy_config_xml) {
+    gulp.watch(['./src/config.xml'], ['config_xml']);
+  }
 });
 
 
@@ -197,9 +218,12 @@ gulp.task('watch', function () {
 ======================================*/
 
 gulp.task('build', function(done) {
-  seq('clean', ['html', 'templates', 'fonts', 'images', 'less', 'js'], done);
+  var tasks = ['html', 'templates', 'fonts', 'images', 'less', 'js'];
+  if (config.copy_config_xml) {
+    tasks.push('config_xml');
+  }
+  seq('clean', tasks, done);
 });
-
 
 /*====================================
 =            Default Task            =
