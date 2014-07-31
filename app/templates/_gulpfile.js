@@ -45,6 +45,8 @@ var gulp           = require('gulp'),
     imagemin       = require('gulp-imagemin'),
     pngcrush       = require('imagemin-pngcrush'),
     templateCache  = require('gulp-angular-templatecache'),
+    mobilizer      = require('gulp-mobilizer'),
+    ngAnnotate     = require('gulp-ng-annotate'),
     path           = require('path');
 
 
@@ -166,11 +168,11 @@ gulp.task('less', function () {
     }))
     .pipe(mobilizer('app.css', {
       'app.css': {
-        hover: false,
+        hover: 'exclude',
         screens: ['0px']      
       },
       'hover.css': {
-        rules: false,
+        hover: 'only',
         screens: ['0px']
       }
     }))
@@ -190,6 +192,7 @@ gulp.task('js', function() {
     ]))
     .pipe(sourcemaps.init())
     .pipe(concat('app.js'))
+    .pipe(ngAnnotate())
     .pipe(uglify())
     .pipe(sourcemaps.write('.'))
     .pipe(gulp.dest(path.join(config.dest, 'js')));
@@ -225,46 +228,11 @@ gulp.task('build', function(done) {
   seq('clean', tasks, done);
 });
 
+
 /*====================================
 =            Default Task            =
 ====================================*/
 
-gulp.task('default', ['build', 'connect', 'watch']);
-
-
-/*=================================
-=            Mobilizer            =
-=================================*/
-
-function mobilizer(filename, targets) {
-  var through = require('through2'),
-      gutil = require('gulp-util'),
-      PluginError = gutil.PluginError,
-      File = gutil.File,
-      _mobilizer = require('mobilizer');
-  
-  return through.obj(function(file, enc, callback) {
-
-    if (filename == file.relative) {    
-      if (file.isNull()) return; // ignore
-      if (file.isStream()) return this.emit('error', new PluginError('gulp-concat',  'Streaming not supported'));
-      
-      var content = file.contents.toString();
-      var results = _mobilizer(content, {targets: targets});
-      var stream  = this;
-      Object.keys(results).forEach(function(k){
-        stream.push(new File({
-          cwd: file.cwd,
-          base: file.base,
-          path: path.join(file.base, k),
-          contents: new Buffer(results[k]),
-          stat: file.stat
-        }));
-      });
-    } else {
-      this.push(file);  
-    }
-
-    callback();
-  });
-}
+gulp.task('default', function(done){
+  seq('build', ['connect', 'watch'], done);
+});

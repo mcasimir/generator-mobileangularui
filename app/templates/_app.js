@@ -5,6 +5,6 @@ angular.module('<%= appModule %>', [
   '<%= appModule %>.controllers.Main'
 ])
 
-.config(["$routeProvider", function($routeProvider) {
+.config(function($routeProvider) {
   $routeProvider.when('/', {templateUrl: 'home.html'});
-}]);
+});

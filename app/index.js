@@ -53,7 +53,6 @@ var MobileangularuiGenerator = yeoman.generators.Base.extend({
     this.mkdir('src/templates');
     this.mkdir('src/html');
     this.mkdir('src/images');
-    this.mkdir('public');
 
     this.copy('_package.json', 'package.json');
     this.copy('_bower.json', 'bower.json');
