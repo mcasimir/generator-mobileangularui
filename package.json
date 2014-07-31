@@ -1,6 +1,6 @@
 {
   "name": "generator-mobileangularui",
-  "version": "1.0.0-beta.1",
+  "version": "1.0.0-beta.2",
   "description": "Yeoman generator for Mobile Angular Ui",
   "license": "MIT",
   "main": "app/index.js",
