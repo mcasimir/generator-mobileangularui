@@ -57,7 +57,6 @@ var MobileangularuiGenerator = yeoman.generators.Base.extend({
     this.copy('_package.json', 'package.json');
     this.copy('_bower.json', 'bower.json');
     this.copy('_index.html', 'src/html/index.html');
-    this.copy('_config.xml', 'src/config.xml');
     this.copy('_sidebar.html', 'src/templates/sidebar.html');
     this.copy('_home.html', 'src/templates/home.html');
     this.copy('_gitignore', '.gitignore');

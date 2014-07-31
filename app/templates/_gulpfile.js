@@ -5,7 +5,6 @@
 var config = {
   dest: 'www',
   minify_images: true,
-  copy_config_xml: true,
   vendor: {
     js: [
       './bower_components/angular/angular.js',
@@ -41,7 +40,8 @@ var gulp           = require('gulp'),
     cssmin         = require('gulp-cssmin'),
     order          = require('gulp-order'),
     concat         = require('gulp-concat'),
-    rimraf         = require('rimraf'),
+    ignore         = require('gulp-ignore'),
+    rimraf         = require('gulp-rimraf'),
     imagemin       = require('gulp-imagemin'),
     pngcrush       = require('imagemin-pngcrush'),
     templateCache  = require('gulp-angular-templatecache'),
@@ -64,9 +64,15 @@ gulp.on('err', function(e) {
 =========================================*/
 
 gulp.task('clean', function (cb) {
-  rimraf(config.dest, cb);
+  return gulp.src([
+        path.join(config.dest, 'index.html'),
+        path.join(config.dest, 'images'),
+        path.join(config.dest, 'css'),
+        path.join(config.dest, 'js'),
+        path.join(config.dest, 'fonts')
+      ], { read: false })
+     .pipe(rimraf());
 });
-
 
 /*==========================================
 =            Start a web server            =
@@ -128,17 +134,6 @@ gulp.task('fonts', function() {
 gulp.task('html', function() {
   return gulp.src([
   'src/html/**/*.html'])
-  .pipe(gulp.dest(config.dest));
-});
-
-
-/*=================================================
-=             Copy xml files to dest              =
-=================================================*/
-
-gulp.task('config_xml', function() {
-  return gulp.src([
-  'src/config.xml'])
   .pipe(gulp.dest(config.dest));
 });
 
@@ -210,9 +205,6 @@ gulp.task('watch', function () {
   gulp.watch(['./src/less/**/*'], ['less']);
   gulp.watch(['./src/js/**/*'], ['js']);
   gulp.watch(['./src/images/**/*'], ['images']);
-  if (config.copy_config_xml) {
-    gulp.watch(['./src/config.xml'], ['config_xml']);
-  }
 });
 
 
@@ -222,9 +214,6 @@ gulp.task('watch', function () {
 
 gulp.task('build', function(done) {
   var tasks = ['html', 'templates', 'fonts', 'images', 'less', 'js'];
-  if (config.copy_config_xml) {
-    tasks.push('config_xml');
-  }
   seq('clean', tasks, done);
 });
 
