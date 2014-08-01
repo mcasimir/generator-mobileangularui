@@ -17,6 +17,11 @@
     "imagemin-pngcrush": "^0.1.0",
     "gulp-angular-templatecache": "^1.2.1",
     "gulp-ng-annotate": "^0.2.0",
-    "gulp-mobilizer": "^0.0.2"
+    "gulp-mobilizer": "^0.0.2",
+    "weinre": "^2.0.0-pre-HH0SN197",
+    "gulp-replace": "^0.4.0",
+    "gulp-angular-filesort": "^1.0.1",
+    "streamqueue": "^0.1.1",
+    "gulp-rename": "^1.2.0"
   }
 }

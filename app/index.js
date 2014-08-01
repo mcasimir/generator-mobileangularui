@@ -63,6 +63,7 @@ var MobileangularuiGenerator = yeoman.generators.Base.extend({
     this.copy('_gulpfile.js', 'gulpfile.js');
     this.copy('_main_controller.js', 'src/js/controllers/main_controller.js');
     this.copy('_app.js', 'src/js/app.js');
+    this.copy('_config.js', 'config.js');
     this.write('src/less/variables.less', '');
     this.write('src/less/mixins.less', '');
     this.copy('_app.less', 'src/less/app.less');

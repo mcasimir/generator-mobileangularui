@@ -5,14 +5,16 @@ Scaffold a Mobile Angular Ui (Angular + Bootstrap) project in 1 minute
 ## Features
 
 - Ready to go (install and start to develop)
-- Targets both [Phonegap](http://phonegap.com/)/[Cordova](http://cordova.apache.org/) and Web Apps
+- Target both [Phonegap](http://phonegap.com/)/[Cordova](http://cordova.apache.org/) and Web Apps
 - Based on [Gulp](http://gulpjs.com/)
 - Use less to code and customize style
 - Compile and compress assets (even images)
 - Use [mobilizer](https://github.com/mcasmir/mobilizer) to strip responsive media-queries and :hover from mobile stylesheets (useful to include 3rd party css)
 - Use [ngAnnotate](https://github.com/olov/ng-annotate) to preserve angular dependency injection on minification
+- Automatically order js sources according to ng Modules dependencies
 - Precompile angular templates
 - Web server with livereload to test in browser
+- Embed weinre to easily debug Phonegap Apps
 - Easily customizable
 
 ## Install
@@ -83,15 +85,16 @@ cordova platform add TARGET
 cordova run TARGET
 ```
 
-For web apps (or just to test in a browser):
+Start a development web server, start Weinre, and watch for changes:
 
 ``` bash
 gulp
 ```
 
-This will build your app, start a local web server and watch for changes.
+If you use weinre, weinre target script is automatically injected in your sources.
 
-Open `localhost:8000` in your browser.
+Open your web app at `localhost:8000`.
+Debug a phonegap app remotely at `localhost:8001`.
 
 ## License
 

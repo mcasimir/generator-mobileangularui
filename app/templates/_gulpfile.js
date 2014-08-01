@@ -1,10 +1,14 @@
 /*=====================================
-=            Configuration            =
+=        Default Configuration        =
 =====================================*/
+
+// Please use config.js to override these selectively:
 
 var config = {
   dest: 'www',
+  cordova: true,
   minify_images: true,
+  
   vendor: {
     js: [
       './bower_components/angular/angular.js',
@@ -21,7 +25,22 @@ var config = {
   server: {
     host: '0.0.0.0',
     port: '8000'
+  },
+
+  weinre: {
+    httpPort:     8001,
+    boundHost:    'localhost',
+    verbose:      false,
+    debug:        false,
+    readTimeout:  5,
+    deathTimeout: 15
   }
+};
+
+
+if (require('fs').existsSync('./config.js')) {
+  var configFn = require('./config');
+  configFn(config);
 };
 
 /*-----  End of Configuration  ------*/
@@ -47,6 +66,10 @@ var gulp           = require('gulp'),
     templateCache  = require('gulp-angular-templatecache'),
     mobilizer      = require('gulp-mobilizer'),
     ngAnnotate     = require('gulp-ng-annotate'),
+    replace        = require('gulp-replace'),
+    ngFilesort     = require('gulp-angular-filesort'),
+    streamqueue    = require('streamqueue'),
+    rename         = require('gulp-rename'),
     path           = require('path');
 
 
@@ -74,17 +97,22 @@ gulp.task('clean', function (cb) {
      .pipe(rimraf());
 });
 
+
 /*==========================================
 =            Start a web server            =
 ==========================================*/
 
 gulp.task('connect', function() {
-  connect.server({
-    root: config.dest,
-    host: config.server.host,
-    port: config.server.port,
-    livereload: true
-  });
+  if (typeof config.server === 'object') {
+    connect.server({
+      root: config.dest,
+      host: config.server.host,
+      port: config.server.port,
+      livereload: true
+    });
+  } else {
+    throw new Error('Connect is not configured');
+  }
 });
 
 
@@ -132,23 +160,16 @@ gulp.task('fonts', function() {
 =================================================*/
 
 gulp.task('html', function() {
-  return gulp.src([
-  'src/html/**/*.html'])
+  var inject = [];
+  if (typeof config.weinre === 'object') {
+    inject.push('<script src="http://'+config.weinre.boundHost+':'+config.weinre.httpPort+'/target/target-script-min.js"></script>');
+  }
+  if (config.cordova) {
+    inject.push('<script src="cordova.js"></script>');
+  }
+  gulp.src(['src/html/**/*.html'])
+  .pipe(replace('<!-- inject:js -->', inject.join('\n    ')))
   .pipe(gulp.dest(config.dest));
-});
-
-
-/*========================================================================
-=            Precompile angular templates to js and minify it            =
-========================================================================*/
-
-gulp.task('templates', function() {
-  return gulp.src(['src/templates/**/*.html'])
-  .pipe(templateCache({
-    module: '<%= appModule %>'
-  }))
-  .pipe(uglify())
-  .pipe(gulp.dest(path.join(config.dest, 'js')));
 });
 
 
@@ -172,6 +193,7 @@ gulp.task('less', function () {
       }
     }))
     .pipe(cssmin())
+    .pipe(rename({suffix: '.min'}))
     .pipe(gulp.dest(path.join(config.dest, 'css')));
 });
 
@@ -179,17 +201,21 @@ gulp.task('less', function () {
 /*====================================================================
 =            Compile and minify js generating source maps            =
 ====================================================================*/
+// - Orders ng deps automatically
+// - Precompile templates to ng templateCache
 
 gulp.task('js', function() {
-  gulp.src(config.vendor.js.concat([
-      './src/js/*/*.js',
-      './src/js/app.js'
-    ]))
+    streamqueue({ objectMode: true },
+      gulp.src(config.vendor.js),
+      gulp.src('./src/js/**/*.js').pipe(ngFilesort()),
+      gulp.src(['src/templates/**/*.html']).pipe(templateCache({ module: '<%= appModule %>' }))
+    )
     .pipe(sourcemaps.init())
     .pipe(concat('app.js'))
     .pipe(ngAnnotate())
     .pipe(uglify())
     .pipe(sourcemaps.write('.'))
+    .pipe(rename({suffix: '.min'}))
     .pipe(gulp.dest(path.join(config.dest, 'js')));
 });
 
@@ -199,12 +225,28 @@ gulp.task('js', function() {
 ===================================================================*/
 
 gulp.task('watch', function () {
-  gulp.watch([config.dest + '/**/*'], ['livereload']);
-  gulp.watch(['./src/templates/**/*'], ['templates']);
+  if (typeof config.server === 'object') {
+    gulp.watch([config.dest + '/**/*'], ['livereload']);  
+  };
   gulp.watch(['./src/html/**/*'], ['html']);
   gulp.watch(['./src/less/**/*'], ['less']);
-  gulp.watch(['./src/js/**/*'], ['js']);
+  gulp.watch(['./src/js/**/*', './src/templates/**/*', config.vendor.js], ['js']);
   gulp.watch(['./src/images/**/*'], ['images']);
+});
+
+
+/*===================================================
+=            Starts a Weinre Server                 =
+===================================================*/
+
+gulp.task('weinre', function() {
+  if (typeof config.weinre === 'object') {
+    require('./node_modules/weinre/node_modules/coffee-script');
+    var weinre = require('./node_modules/weinre/lib/weinre');
+    weinre.run(config.weinre);
+  } else {
+    throw new Error('Weinre is not configured');
+  }
 });
 
 
@@ -213,7 +255,7 @@ gulp.task('watch', function () {
 ======================================*/
 
 gulp.task('build', function(done) {
-  var tasks = ['html', 'templates', 'fonts', 'images', 'less', 'js'];
+  var tasks = ['html', 'fonts', 'images', 'less', 'js'];
   seq('clean', tasks, done);
 });
 
@@ -223,5 +265,17 @@ gulp.task('build', function(done) {
 ====================================*/
 
 gulp.task('default', function(done){
-  seq('build', ['connect', 'watch'], done);
+  var tasks = [];
+
+  if (typeof config.weinre === 'object') {
+    tasks.push('weinre');
+  };
+
+  if (typeof config.server === 'object') {
+    tasks.push('connect');
+  };
+
+  tasks.push('watch');
+  
+  seq('build', tasks, done);
 });
