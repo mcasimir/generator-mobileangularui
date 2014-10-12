@@ -241,7 +241,6 @@ gulp.task('watch', function () {
 
 gulp.task('weinre', function() {
   if (typeof config.weinre === 'object') {
-    require('./node_modules/weinre/node_modules/coffee-script');
     var weinre = require('./node_modules/weinre/lib/weinre');
     weinre.run(config.weinre);
   } else {
