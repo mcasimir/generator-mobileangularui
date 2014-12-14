@@ -13,7 +13,6 @@ var config = {
     js: [
       './bower_components/angular/angular.js',
       './bower_components/angular-route/angular-route.js',
-      './bower_components/angular-touch/angular-touch.js',
       './bower_components/mobile-angular-ui/dist/js/mobile-angular-ui.js'
     ],
 
@@ -214,8 +213,8 @@ gulp.task('js', function() {
     .pipe(concat('app.js'))
     .pipe(ngAnnotate())
     .pipe(uglify())
-    .pipe(sourcemaps.write('.'))
     .pipe(rename({suffix: '.min'}))
+    .pipe(sourcemaps.write('.'))
     .pipe(gulp.dest(path.join(config.dest, 'js')));
 });
 
