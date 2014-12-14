@@ -1,6 +1,5 @@
 angular.module('<%= appModule %>', [
   'ngRoute',
-  'ngTouch',
   'mobile-angular-ui',
   '<%= appModule %>.controllers.Main'
 ])
