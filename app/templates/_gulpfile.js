@@ -40,7 +40,7 @@ var config = {
 if (require('fs').existsSync('./config.js')) {
   var configFn = require('./config');
   configFn(config);
-};
+}
 
 /*-----  End of Configuration  ------*/
 
@@ -76,8 +76,8 @@ var gulp           = require('gulp'),
 =            Report Errors to Console            =
 ================================================*/
 
-gulp.on('err', function(e) {
-  console.log(e.err.stack);
+gulp.on('error', function(e) {
+  throw(e);
 });
 
 
@@ -130,15 +130,15 @@ gulp.task('livereload', function () {
 =====================================*/
 
 gulp.task('images', function () {
-  var stream = gulp.src('src/images/**/*')
+  var stream = gulp.src('src/images/**/*');
   
   if (config.minify_images) {
     stream = stream.pipe(imagemin({
         progressive: true,
         svgoPlugins: [{removeViewBox: false}],
         use: [pngcrush()]
-    }))
-  };
+    }));
+  }
   
   return stream.pipe(gulp.dest(path.join(config.dest, 'images')));
 });
@@ -226,7 +226,7 @@ gulp.task('js', function() {
 gulp.task('watch', function () {
   if (typeof config.server === 'object') {
     gulp.watch([config.dest + '/**/*'], ['livereload']);  
-  };
+  }
   gulp.watch(['./src/html/**/*'], ['html']);
   gulp.watch(['./src/less/**/*'], ['less']);
   gulp.watch(['./src/js/**/*', './src/templates/**/*', config.vendor.js], ['js']);
@@ -267,11 +267,11 @@ gulp.task('default', function(done){
 
   if (typeof config.weinre === 'object') {
     tasks.push('weinre');
-  };
+  }
 
   if (typeof config.server === 'object') {
     tasks.push('connect');
-  };
+  }
 
   tasks.push('watch');
   

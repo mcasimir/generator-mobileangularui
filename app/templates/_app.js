@@ -5,5 +5,5 @@ angular.module('<%= appModule %>', [
 ])
 
 .config(function($routeProvider) {
-  $routeProvider.when('/', {templateUrl: 'home.html'});
+  $routeProvider.when('/', {templateUrl:'home.html',  reloadOnSearch: false});
 });
