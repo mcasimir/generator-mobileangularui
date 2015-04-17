@@ -6,7 +6,7 @@
     "angular": "1.x",
     "angular-route": "1.x",
     "mobile-angular-ui": "1.2.x",
-    "font-awesome": "4.x",
+    "font-awesome": "4.2",
     "bootstrap": "3.x"
   }
 }
