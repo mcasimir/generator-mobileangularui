@@ -13,8 +13,6 @@
     "run-sequence": "^0.3.6",
     "gulp-sourcemaps": "^1.1.0",
     "gulp-cssmin": "^0.1.6",
-    "gulp-imagemin": "^0.6.2",
-    "imagemin-pngcrush": "^0.1.0",
     "gulp-angular-templatecache": "^1.2.1",
     "gulp-ng-annotate": "^0.2.0",
     "gulp-mobilizer": "^0.0.2",

@@ -7,8 +7,7 @@
 var config = {
   dest: 'www',
   cordova: true,
-  minify_images: true,
-  
+
   vendor: {
     js: [
       './bower_components/angular/angular.js',
@@ -60,8 +59,6 @@ var gulp           = require('gulp'),
     concat         = require('gulp-concat'),
     ignore         = require('gulp-ignore'),
     rimraf         = require('gulp-rimraf'),
-    imagemin       = require('gulp-imagemin'),
-    pngcrush       = require('imagemin-pngcrush'),
     templateCache  = require('gulp-angular-templatecache'),
     mobilizer      = require('gulp-mobilizer'),
     ngAnnotate     = require('gulp-ng-annotate'),
@@ -130,17 +127,8 @@ gulp.task('livereload', function () {
 =====================================*/
 
 gulp.task('images', function () {
-  var stream = gulp.src('src/images/**/*');
-  
-  if (config.minify_images) {
-    stream = stream.pipe(imagemin({
-        progressive: true,
-        svgoPlugins: [{removeViewBox: false}],
-        use: [pngcrush()]
-    }));
-  }
-  
-  return stream.pipe(gulp.dest(path.join(config.dest, 'images')));
+  return gulp.src('src/images/**/*')
+        .pipe(gulp.dest(path.join(config.dest, 'images')));
 });
 
 
@@ -184,7 +172,7 @@ gulp.task('less', function () {
     .pipe(mobilizer('app.css', {
       'app.css': {
         hover: 'exclude',
-        screens: ['0px']      
+        screens: ['0px']
       },
       'hover.css': {
         hover: 'only',
@@ -225,7 +213,7 @@ gulp.task('js', function() {
 
 gulp.task('watch', function () {
   if (typeof config.server === 'object') {
-    gulp.watch([config.dest + '/**/*'], ['livereload']);  
+    gulp.watch([config.dest + '/**/*'], ['livereload']);
   }
   gulp.watch(['./src/html/**/*'], ['html']);
   gulp.watch(['./src/less/**/*'], ['less']);
@@ -274,6 +262,6 @@ gulp.task('default', function(done){
   }
 
   tasks.push('watch');
-  
+
   seq('build', tasks, done);
 });
