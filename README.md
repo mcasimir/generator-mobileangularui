@@ -1,6 +1,7 @@
-[![Build Status](https://travis-ci.org/mcasimir/generator-mobileangularui.svg?branch=master)](https://travis-ci.org/mcasimir/generator-mobileangularui)
-
 # [Mobile Angular Ui](http://mobileangularui.com) Boilerplate generator
+
+[![Build Status](https://travis-ci.org/mcasimir/generator-mobileangularui.svg?branch=master)](https://travis-ci.org/mcasimir/generator-mobileangularui) [![Join the chat at https://gitter.im/mcasimir/mobile-angular-ui](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/mcasimir/mobile-angular-ui?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 
 Scaffold a Mobile Angular Ui (Angular + Bootstrap) project in 1 minute
 
