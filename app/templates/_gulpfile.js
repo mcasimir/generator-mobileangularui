@@ -1,3 +1,6 @@
+/* jshint node: true, strict: true */
+'use strict';
+
 /*=====================================
 =        Default Configuration        =
 =====================================*/
@@ -7,13 +10,25 @@
 var config = {
   dest: 'www',
   cordova: true,
-
+  less: {
+    src: [
+      './src/less/app.less', './src/less/responsive.less'
+    ],
+    paths: [
+      './src/less', './bower_components'
+    ]
+  },
   vendor: {
     js: [
       './bower_components/angular/angular.js',
       './bower_components/angular-route/angular-route.js',
       './bower_components/mobile-angular-ui/dist/js/mobile-angular-ui.js'
     ],
+
+    css: {
+      prepend: [],
+      append: [],
+    },
 
     fonts: [
       './bower_components/font-awesome/fonts/fontawesome-webfont.*'
@@ -34,7 +49,6 @@ var config = {
     deathTimeout: 15
   }
 };
-
 
 if (require('fs').existsSync('./config.js')) {
   var configFn = require('./config');
@@ -165,9 +179,10 @@ gulp.task('html', function() {
 ======================================================================*/
 
 gulp.task('less', function () {
-  gulp.src(['./src/less/app.less', './src/less/responsive.less'])
-    .pipe(less({
-      paths: [ path.resolve(__dirname, 'src/less'), path.resolve(__dirname, 'bower_components') ]
+    return gulp.src(config.less.src).pipe(less({
+      paths: config.less.paths.map(function(p){
+        return path.resolve(__dirname, p);
+      })
     }))
     .pipe(mobilizer('app.css', {
       'app.css': {
