@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/mcasimir/generator-mobileangularui.svg?branch=master)](https://travis-ci.org/mcasimir/generator-mobileangularui)
+
 # [Mobile Angular Ui](http://mobileangularui.com) Boilerplate generator
 
 Scaffold a Mobile Angular Ui (Angular + Bootstrap) project in 1 minute
@@ -8,7 +10,7 @@ Scaffold a Mobile Angular Ui (Angular + Bootstrap) project in 1 minute
 - Target both [Phonegap](http://phonegap.com/)/[Cordova](http://cordova.apache.org/) and Web Apps
 - Based on [Gulp](http://gulpjs.com/)
 - Use less to code and customize style
-- Compile and compress assets (even images)
+- Compile and compress assets
 - Use [mobilizer](https://github.com/mcasmir/mobilizer) to strip responsive media-queries and :hover from mobile stylesheets (useful to include 3rd party css)
 - Use [ngAnnotate](https://github.com/olov/ng-annotate) to preserve angular dependency injection on minification
 - Automatically order js sources according to ng Modules dependencies
