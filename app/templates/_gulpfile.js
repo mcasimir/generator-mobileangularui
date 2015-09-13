@@ -199,6 +199,22 @@ gulp.task('less', function () {
     .pipe(gulp.dest(path.join(config.dest, 'css')));
 });
 
+gulp.task('css-prepend', function() {
+  return gulp.src()
+    .pipe(concat('prepend.css'))
+    .pipe(cssmin())
+    .pipe(rename({suffix: '.min'}))
+    .pipe(gulp.dest(path.join(config.dest, 'css')));
+});
+gulp.task('css-append', function() {
+  return gulp.src(config.vendor.css.append)
+    .pipe(concat('append.css'))
+    .pipe(cssmin())
+    .pipe(rename({suffix: '.min'}))
+    .pipe(gulp.dest(path.join(config.dest, 'css')));
+});
+gulp.task('css', ['css-prepend', 'css-append'], function() {});
+
 
 /*====================================================================
 =            Compile and minify js generating source maps            =
@@ -256,7 +272,7 @@ gulp.task('weinre', function() {
 ======================================*/
 
 gulp.task('build', function(done) {
-  var tasks = ['html', 'fonts', 'images', 'less', 'js'];
+  var tasks = ['html', 'fonts', 'images', 'less', 'js', 'css'];
   seq('clean', tasks, done);
 });
 
