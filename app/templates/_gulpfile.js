@@ -9,7 +9,7 @@
 
 var config = {
   dest: 'www',
-  cordova: true,
+  cordova:<% if(cordova) { %>true<% }else{ %>false<% } %>,
   less: {
     src: [
       './src/less/app.less', './src/less/responsive.less'

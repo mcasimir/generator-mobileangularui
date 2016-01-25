@@ -33,10 +33,16 @@ var MobileangularuiGenerator = yeoman.generators.Base.extend({
           name: 'appName',
           message: 'What is your app\'s name ?',
           default: 'My App'
+        },{
+          type: 'confirm',
+          name: 'cardova',
+          message: 'Would you use cordova?',
+          default: true
         }];
 
     this.prompt(prompts, function (props) {
       this.appName = props.appName;
+      this.cordova = props.cordova;
       this.appSlug = slug(props.appName).toLowerCase();
       this.appModule = camelize(props.appName);
       done();
