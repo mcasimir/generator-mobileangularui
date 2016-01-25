@@ -33,10 +33,16 @@ var MobileangularuiGenerator = yeoman.generators.Base.extend({
           name: 'appName',
           message: 'What is your app\'s name ?',
           default: 'My App'
+        },{
+          type: 'confirm',
+          name: 'cardova',
+          message: 'Would you use cordova?',
+          default: true
         }];
 
     this.prompt(prompts, function (props) {
       this.appName = props.appName;
+      this.cordova = props.cordova;
       this.appSlug = slug(props.appName).toLowerCase();
       this.appModule = camelize(props.appName);
       done();
@@ -56,6 +62,7 @@ var MobileangularuiGenerator = yeoman.generators.Base.extend({
 
     this.copy('_package.json', 'package.json');
     this.copy('_bower.json', 'bower.json');
+    this.copy('_.bowerrc', '.bowerrc');
     this.copy('_index.html', 'src/html/index.html');
     this.copy('_sidebar.html', 'src/templates/sidebar.html');
     this.copy('_home.html', 'src/templates/home.html');
